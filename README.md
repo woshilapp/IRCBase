@@ -1,47 +1,74 @@
-# IRC Base
+# IRCBase (Go Edition)
 
-IRCBase 是一个基于Java和SmartSocket的我的世界Mod IRC框架，项目包括客户端(client)、服务器(server)和通用(common)三个部分，支持多种消息类型和自定义包处理。
+IRCBase 现在是一个使用 Go 编写的轻量级 IRC 风格聊天服务，实现了原 Java 版本的客户端/服务端协议。项目包含：
 
-## TODO
+- `pkg/packets` —— 协议数据结构定义。
+- `pkg/protocol` —— 数据包编解码与注册逻辑。
+- `pkg/server` —— 可运行的聊天服务器实现。
+- `pkg/client` —— 客户端传输层，提供与服务器交互的 Go API。
+- `cmd/server` —— 通过命令行启动服务器的入口程序。
 
-- 实现指令系统
-- 实现权限系统
+## 功能
 
-## 特性
+- 长连接 TCP 通信，采用长度前缀的 JSON 数据包格式。
+- 握手、聊天消息、断线通知以及游戏内昵称同步。
+- 线程安全的用户管理与周期性在线列表同步。
 
-- 支持同步游戏中用户名（你可以在游戏中看到其他用户）
-- 使用SmartSocket进行通信
-- 支持List, Map, Set等合集序列化发送
+## 构建与运行
 
-## 构建
+```bash
+# 获取依赖（本项目仅使用标准库）
+go mod tidy
 
-- clone本项目
-- 导入IntelliJ IDEA，打开Maven菜单，点击IRCBase(root) -> Lifecycle -> package
-- 复制`client/target/client-1.0-SNAPSHOT.jar`到你的客户端依赖
-- 在你的客户端中初始化IRC
-
-## 使用（客户端）
-
-初始化IRCTransport（参数为你的服务器ip，端口，事件处理器）
-
-你可以查看[IRCTest.java](client/src/test/java/IRCTest.java)，包含基本用例
-
-一些其他示例：
-
-### 判断是否为客户端用户
-
-```java
-ircTransport.isUser(entity.getName())
+# 运行服务器，默认监听 0.0.0.0:8888
+go run ./cmd/server
 ```
 
-### 获取客户端用户名
+服务器会在收到 `SIGINT`/`SIGTERM` 信号时优雅退出。
 
-```java
-ircTransport.getName(entity.getName())
+## 客户端使用示例
+
+```go
+package main
+
+import (
+    "log"
+
+    "github.com/cubk/ircbase/pkg/client"
+)
+
+type demoHandler struct{}
+
+func (demoHandler) OnMessage(sender, message string) {
+    log.Printf("%s >> %s", sender, message)
+}
+
+func (demoHandler) OnDisconnected(reason string) {
+    log.Printf("disconnected: %s", reason)
+}
+
+func (demoHandler) OnConnected() {
+    log.Println("connected to server")
+}
+
+func (demoHandler) InGameUsername() string {
+    return "DemoIGN"
+}
+
+func main() {
+    transport, err := client.NewTransport("127.0.0.1:8888", demoHandler{})
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer transport.Close()
+
+    transport.Connect("DemoUser", "token")
+    transport.SendChat("Hello IRCBase!")
+}
 ```
 
-## 使用（服务端）
+客户端会自动维护用户名和 IGN 的映射关系，并且每 5 秒同步一次游戏内昵称。
 
-你可以在[IRCServer.java 源代码](server/src/main/java/us/cubk/irc/server/IRCServer.java)中修改端口（默认为`8888`）
+## 协议兼容性
 
-构建之后查看`server/target/server-1.0-SNAPSHOT.jar`，使用命令`java -jar server-1.0-SNAPSHOT.jar`在你的服务器上启动服务端即可
+数据包 ID 与字段名称保持与历史 Java 实现一致，因此现有客户端/服务端可以逐步迁移到 Go 版本。
