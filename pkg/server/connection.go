@@ -75,17 +75,17 @@ func (c *connection) readLoop() {
 func (c *connection) writeLoop() {
 	for {
 		select {
-		case data, ok := <-c.send:
-			if !ok {
-				return
+		case <-c.done:
+			return
+		case data := <-c.send:
+			if data == nil {
+				continue
 			}
 			if _, err := c.conn.Write(data); err != nil {
 				log.Printf("connection %s write error: %v", c.id, err)
 				c.close()
 				return
 			}
-		case <-c.done:
-			return
 		}
 	}
 }
@@ -99,6 +99,12 @@ func (c *connection) SendPacket(packet protocol.Packet) error {
 	framed := make([]byte, 4+len(data))
 	binary.BigEndian.PutUint32(framed[:4], uint32(len(data)))
 	copy(framed[4:], data)
+
+	select {
+	case <-c.done:
+		return errConnectionClosed
+	default:
+	}
 
 	select {
 	case c.send <- framed:
@@ -118,7 +124,6 @@ func (c *connection) Disconnect(reason string) {
 func (c *connection) close() {
 	c.closeOnce.Do(func() {
 		close(c.done)
-		close(c.send)
 		_ = c.conn.Close()
 		c.server.onConnectionClosed(c)
 	})
