@@ -1,5 +1,7 @@
 # IRCBase (Go Edition) (Based on [Cubk IRCBase](https://github.com/cubk1/IRCBase))
 
+This project is powered by OpenAI Codex(Rewriting in Go)
+
 IRCBase 现在是一个使用 Go 编写的轻量级 IRC 风格聊天服务，实现了原 Java 版本的客户端/服务端协议。项目包含：
 
 - `packets` —— 协议数据结构定义。
