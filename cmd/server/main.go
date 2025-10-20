@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/cubk/ircbase/pkg/server"
+	"github.com/woshilapp/IRCBaseGo/server"
 )
 
 func main() {

@@ -1,3 +1,3 @@
-module github.com/cubk/ircbase
+module github.com/woshilapp/IRCBaseGo
 
-go 1.22.2
+go 1.24.2

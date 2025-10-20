@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/cubk/ircbase/pkg/packets"
+	"github.com/woshilapp/IRCBaseGo/packets"
 )
 
 // Packet represents any encoded message exchanged between the client and server.

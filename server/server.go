@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/cubk/ircbase/pkg/packets"
-	"github.com/cubk/ircbase/pkg/protocol"
+	"github.com/woshilapp/IRCBaseGo/packets"
+	"github.com/woshilapp/IRCBaseGo/protocol"
 )
 
 // Server hosts the chat service.

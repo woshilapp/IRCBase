@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cubk/ircbase/pkg/packets"
-	"github.com/cubk/ircbase/pkg/protocol"
+	"github.com/woshilapp/IRCBaseGo/packets"
+	"github.com/woshilapp/IRCBaseGo/protocol"
 )
 
 var errConnectionClosed = errors.New("connection closed")

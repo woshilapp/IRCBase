@@ -1,11 +1,11 @@
-# IRCBase (Go Edition)
+# IRCBase (Go Edition) (Based on [Cubk IRCBase](https://github.com/cubk1/IRCBase))
 
 IRCBase 现在是一个使用 Go 编写的轻量级 IRC 风格聊天服务，实现了原 Java 版本的客户端/服务端协议。项目包含：
 
-- `pkg/packets` —— 协议数据结构定义。
-- `pkg/protocol` —— 数据包编解码与注册逻辑。
-- `pkg/server` —— 可运行的聊天服务器实现。
-- `pkg/client` —— 客户端传输层，提供与服务器交互的 Go API。
+- `packets` —— 协议数据结构定义。
+- `protocol` —— 数据包编解码与注册逻辑。
+- `server` —— 可运行的聊天服务器实现。
+- `client` —— 客户端传输层，提供与服务器交互的 Go API。
 - `cmd/server` —— 通过命令行启动服务器的入口程序。
 
 ## 功能
@@ -34,7 +34,7 @@ package main
 import (
     "log"
 
-    "github.com/cubk/ircbase/pkg/client"
+    "github.com/woshilapp/IRCBaseGo/client"
 )
 
 type demoHandler struct{}
